@@ -1,9 +1,9 @@
 let modInfo = {
 	name:"音乐游戏树",
-	id: "Rhythm Game",
-	author: "QqQe308",
+	id: "Rhythm Game Final",
+	author: "QqQe308 & QqQeInfinity(v0.60)",
 	pointsName: "Notes",
-	modFiles: ["layers.js", "layers2.js", "tree.js"],
+	modFiles: ["layers.js", "layers2.js",'layers3.js', "tree.js"],
 	discordName: "作者的B站链接",
 	discordLink: "https://b23.tv/ALvJ9Im",
 	initialStartPoints: n(10), // Used for hard resets and new players
@@ -11,16 +11,16 @@ let modInfo = {
 }
 // Set your version in num and name
 let VERSION = {
-	num: "0.599",
-	name: "Stop Updating",
+	num: "0.6",
+	name: "Final Update",
 }
 
-let winText = `恭喜通关！你已经完成了你的音游之旅…吗？请期待下一个更新……<br>当前结局：e1.213e7 Notes，下一个更新…还会有吗`
+let winText = `恭喜通关！你已经完成了你的音游之旅…吗？请期待下一个更新……<br>当前结局：e9e15 Notes，下一个更新…还会有吗`
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.points.gte('e1.213e7')
-	//return false
+	//return player.points.gte('e9e15')
+	return false
 }
 
 // Display extra things at the top of the page
@@ -34,7 +34,7 @@ var displayThings = [
    if(gcs('S',14)) b=b+"<br>课题力量: "+format(player.ch.enp)
    if(gcs('S',15)) b=b+"<br>填充Notes: "+format(player.r.notes)
    if(gcs('S',16)) b=b+"<br>游玩时长: "+formatTime(player.timeplayed)
-   let a= "v0.59游戏结局: e1.213e7 Notes！"
+   let a= "v0.6游戏结局: e9.000e15 Notes！"
    if(inChallenge('r',12)&&player.devSpeed.eq(0)) a=a+"<br>你需要在Rot升级树里选择升级，并且点击升级12确定以开始挑战！"
   if(isEndgame()) a=a+"<br>恭喜通关！"
   if(getPointGen().gte(player.pointSoftcapStart.pow(0.9))) a=a+"<br>Notes获取量在"+format(player.pointSoftcapStart)+"达到软上限！<br>软上限效果:超过部分^"+format(player.pointSoftcapPower,3)
@@ -43,6 +43,9 @@ var displayThings = [
 ]
 
 let changelog = `<h1>更新日志</h1><br>
+<h2>v0.6 Final Update 2025/08/22~2025/0?/??<br>
+<h3>- 添加一个层级：IOS审核<br>
+- 游戏结局：e9e15 Notes<br><br>
 <h2>v0.599 Stop Updating 2025/08/21<br>
 <h3>- 游戏(长期)停更<br>
 <h3>- 修复vue.js<br><br>
@@ -130,7 +133,7 @@ function getStartPoints(){
 
 // Determines if it should show points/sec
 function canGenPoints(){
-return !player.points.gte('e1.213e7')
+return !player.points.gte('e9e15')
 //return true
 }
 
@@ -178,6 +181,12 @@ if (hasUpgrade('sp', 21)) gain = gain.times(upgradeEffect('sp', 21))
 if (hasUpgrade('j', 21)) gain = gain.times(upgradeEffect('j', 21))
 if (hasUpgrade('j', 37)) gain = gain.times(upgradeEffect('j', 37))
 if (gcs("r",21)==1) gain = gain.times(clickableEffect("r", 21))
+	if(buyableEffect('i',21).gte(1)) gain = gain.times(buyableEffect('i',21))
+	if(hasUpgrade('i',121)) gain = gain.times(upgradeEffect('i',121))
+	if(hasUpgrade('i',153)) gain = gain.times(upgradeEffect('i',153))
+	if(hasUpgrade('i',165)) gain = gain.times(upgradeEffect('i',165))
+	if(hasUpgrade('i',185)) gain = gain.times(upgradeEffect('i',185))
+	if(hasMilestone('i',12))gain=gain.times(tmp.i.rift4eff)
 
 
 	if (hasUpgrade('l', 12)) gain = gain.pow(upgradeEffect('l', 12))
@@ -189,6 +198,8 @@ if (hasUpgrade('ch', 27)) gain = gain.pow(1.05)
 if (hasUpgrade('sp', 27)) gain = gain.pow(1.001)
 if (hasAchievement('A', 65)) gain = gain.pow(1.0101)
 if(tmp.a.drEff4.gte(1)) gain=gain.pow(tmp.a.drEff4)
+	if(hasMilestone('i',7)) gain = gain.pow(tmp.i.rift2eff3)
+
 
 if(inChallenge('p',12)){gain= gain.pow(0.1)}
 	if(hasChallenge('p',13)){gain = gain.pow(challengeEffect('p',13))}
@@ -206,10 +217,14 @@ if(inChallenge('r',11))gain= gain.pow(0.1)
 if(gcs('j',11)==1) gain=gain.pow(tmp.j.pdqj1)
 if(inChallenge('ri',12)) gain=n(10).pow(gain.max(10).log10().pow(n(0.1).pow(clickableEffect('e',15)).min(0.4)))
 
+if(gba('i',11).gte(1))gain = gain.pow(0.5)
+	if(gba('i',11).gte(1)&&(inChallenge('p',11)||inChallenge('p',12)||inChallenge('p',13)||inChallenge('p',14)||inChallenge('p',15))) gain = gain.pow(0.8)
+		//if(gain.gte('1e200000')&&gba('i',11).gte(1)) gain = gain.div('1e200000').pow(0.8).times('1e200000')
+
 if(gain.gte(player.pointSoftcapStart)) gain=gain.div(player.pointSoftcapStart).pow(player.pointSoftcapPower).mul(player.pointSoftcapStart)
 
 
-if(player.devSpeed.neq(0)) gain=gain.min(n('e1.213e7').div(player.devSpeed))
+if(player.devSpeed.neq(0)&&!gba('i',11).gte(1)) gain=gain.min(n('e5e8').div(player.devSpeed))
 if(inChallenge('r',13))gain= gain.min(player.mi.points)
 
 	return gain
@@ -241,6 +256,7 @@ function addedPlayerData() { return {
  var Phigros="Phigros什么时候更新急急急" 
  var long2024="龙年马上要到了！祝大家新年龙腾虎跃，龙飞凤舞，龙批一个，事业有成，学业顺利，身体健康，财源滚滚，音游全AP，考试全满分，工作全加薪，玩树全通关，再次献上音乐游戏树全体作者（共1人）的真挚祝福！！！！！！！！！！（已经八月份了，我觉得这个彩蛋完全没有意义）" 
  var QqQe308="我是QqQe308，v我50更新音乐游戏树" 
+ var QqQeInfinity="我是QqQeInfinity，QqQe308已经被我超市了" 
 //彩蛋区
 
 
@@ -266,7 +282,9 @@ function fixOldSave(oldVersion){
  player.QqQ=0;player.banana=0;player.Liu=0;player.fufu=0;player.Loader=0;player.yszqzls=0;player.yyyxs=0;player.Genshin=0;player.Phigros=0;player.long2024=0;player.QqQe308=0;//过去的彩蛋变量，现在留着太占存档空间了，修改一下
 }
 
-function rksRandom() {return n(player.A.resetTime).sub(n(player.A.resetTime).floor())}
+function rksRandom() {return n(player.timeplayed).sub(n(player.timeplayed).floor())}
+
+function ketiRandom() {return n(player.timeplayed).sub(n(player.timeplayed).div(1).floor())}
 
 function gba(a,b){return getBuyableAmount(a,b)}
 

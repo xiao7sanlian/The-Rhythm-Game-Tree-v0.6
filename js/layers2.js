@@ -62,6 +62,7 @@ chalBox: {
      if (gcs("r",132)==1) mult = mult.times(clickableEffect("r", 132))
      if (gcs("r",133)==1) mult = mult.times(clickableEffect("r", 133))
      if (gcs("r",153)==1) mult = mult.times(clickableEffect("r", 153))
+      if(hasMilestone('i',13)) mult=mult.times(tmp.i.rift4eff2)
      mult=mult.times(tmp.j.pdqja1)
      return mult
     },
@@ -115,8 +116,8 @@ chalBox: {
 	},
 	passiveGeneration()
   {mult = n(0)
-  if(gcs('r',61)==1)
-  mult = clickableEffect('r',61)
+  if(gcs('r',61)==1) mult = clickableEffect('r',61)
+    if(gba('i',11).gte(1)) mult = mult.div(1e8)
 return mult
   },
   inChal() {
@@ -176,6 +177,9 @@ return mult
      if(hasMilestone('ri',3)) kept.push("clickables")
      if(hasMilestone('ri',8)) kept.push("buyables")
       }
+     if (resettingLayer == 'i') kept = []
+     if(hasUpgrade('i',62)) kept.push("milestones")
+      if(hasUpgrade('i',63)) kept.push("upgrades")
       layerDataReset(this.layer, kept)
      }
     },
@@ -1545,6 +1549,7 @@ buyBoost:n(2),//购买维度倍率
     if(gcs("r",142)==1) a = a.times(clickableEffect("r", 142))
     if(gcs("r",143)==1) a = a.times(clickableEffect("r", 143))
     if(tmp.ri.mil1.gte(1)) a=a.times(tmp.ri.mil1)
+    if(gba('i',11).gte(1)) a = a.div(100)
      return a
     },//计算维度的其他倍率
     buyBoost() {
@@ -1599,6 +1604,7 @@ doReset(resettingLayer) {
     if(hasMilestone('ri',3)) kept.push("buyables","dim1","dim2","dim3","dim4","dim5","dim6","dim7","dim8","dim9")
      if(hasMilestone('ri',7)) kept.push("points")
       }
+    if (resettingLayer == 'i') kept = []
       layerDataReset(this.layer, kept)
      }
     },
@@ -2368,6 +2374,7 @@ doReset(resettingLayer) {
      if(hasMilestone('ri',2)) kept.push("upgrades")
      if(hasMilestone('ri',4)) kept.push("pdqja","pdqj")
       }
+    if (resettingLayer == 'i') kept = []
       layerDataReset(this.layer, kept)
      }
     },
@@ -2436,6 +2443,24 @@ doReset(resettingLayer) {
     effectDescription: "最佳判定区间在200ms以后受二重软上限影响",
     unlocked() {return hasMilestone('j',9)},
     done() { return player.j.pdqja.lte(200)},
+   },
+   11: {
+    requirementDescription: "通过150ms判定区间挑战",
+    effectDescription: "移除经验与Dot硬上限",
+    unlocked() {return hasMilestone('j',10)},
+    done() { return player.j.pdqja.lte(150)},
+   },
+   12: {
+    requirementDescription: "通过100ms判定区间挑战",
+    effectDescription: "移除经验分配硬上限",
+    unlocked() {return hasMilestone('j',11)},
+    done() { return player.j.pdqja.lte(100)},
+   },
+   13: {
+    requirementDescription: "在0ms判定区间挑战中达到e6666686 Notes",
+    effectDescription: "解锁最后一个层级",
+    unlocked() {return hasMilestone('j',12)},
+    done() { return player.j.pdqj00.lte(0)&&player.points.gte('1e6666686')},
    },
    },
    clickables:{    
@@ -2812,6 +2837,7 @@ colBox: {
       if (resettingLayer == "t") {
      kept.push("milestones","upgrades","points")
       }
+      if (resettingLayer == 'i') kept = []
       layerDataReset(this.layer, kept)
      }
     },
@@ -3367,7 +3393,7 @@ unlocked(){return hasUpgrade('ri',17)}
     buy() { 
     player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(1)
       },
-     purchaseLimit() {return n(100)},
+     purchaseLimit() {return n(50)},
      style: {'height':'150px'},
 			},
  22: {
@@ -3395,7 +3421,7 @@ unlocked(){return hasUpgrade('ri',17)}
     buy() { 
     player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(1)
       },
-     purchaseLimit() {return n(100)},
+     purchaseLimit() {return n(40)},
      style: {'height':'150px'},
 			},
     },
@@ -3468,6 +3494,8 @@ unlocked(){return hasUpgrade('ri',17)}
      },
     },
 })//Rizline
+
+
 addLayer("e", {
     infoboxes: {
 introBox: {
@@ -3559,20 +3587,21 @@ asBox: {
      if(hasMilestone('e',7)) player.e.bestOnce=tmp.e.getResetGain.max(player.e.bestOnce)
      if(hasMilestone('e',8)) {
       for(i=11;i<=17;i++) {
-      if(tmp.e.clickables[i].unlocked&&player.e.assigned[i-11].lt(3e6)) player.e.assigned[i-11]=player.e.assigned[i-11].add(exp)
+      if(tmp.e.clickables[i].unlocked&&(player.e.assigned[i-11].lt(3e6)||hasMilestone('j',12))) player.e.assigned[i-11]=player.e.assigned[i-11].add(exp)
       }
      }
-     player.e.points=player.e.points.min(2.5e5)
+     if (!hasMilestone('j',11)) {player.e.points=player.e.points.min(2.5e5)
      player.ri.points=player.ri.points.min(2.5e46)
-     player.ri.total=player.ri.total.min(2.5e46)
+     player.ri.total=player.ri.total.min(2.5e46)}
+     if (!hasMilestone('j',12)){
       for(i=0;i<=6;i++) {
       if(player.e.assigned[i].gte(3e6)) player.e.assigned[i]=n(3e6)
-      }
+      }}
     },
     hotkeys: [
      {key: "e", description: "E: Reset for Experiences", onPress(){if(canReset(this.layer)) doReset(this.layer)}},
     ],
-    layerShown(){ return hasUpgrade('ri',37)},
+    layerShown(){ return hasUpgrade('ri',37)||hasAchievement('A',111)},
     tabFormat: {
     "Milestones": {
         content: [ ["infobox","introBox"],
@@ -3603,6 +3632,8 @@ unlocked(){return true}
 ],
 unlocked(){return hasUpgrade('e',17)}
     },
+},
+doReset(resettingLayer){if (resettingLayer == 'i') layerDataReset(this.layer,[])
 },
     upgrades: {
     11:{
@@ -3811,7 +3842,7 @@ unlocked(){return hasUpgrade('e',17)}
     },
     13: {
      requirementDescription: "一次重置获得超过17经验 并且 通过200ms判定区间挑战",
-     effectDescription() {return "恭喜通关！"},
+     effectDescription() {return "恭喜通关……？"},
      unlocked() {return hasMilestone('e',12)},
      done() { return player.e.bestOnce.gte(17)&&player.j.pdqja.lte(200)}
     },
