@@ -24,18 +24,23 @@ nerfBox: {
     黄键效果在1.15后受软上限限制<br>
     进行课题模式的按钮无法长按，且无法随时点击<br>
     课题力量仅在进行课题模式时获取，获取量/10<br>
-    Arcaea曲包价格x1e500<br>
+    Arcaea曲包价格x1e500，Phigros曲包价格x1e150<br>
     蛇物量获取/10，被动获取/1e6<br>
     龙被动获取/1e8<br>
     Ro层级第一个里程碑的所有增益效果被禁用<br>
     旋律被动获取/1e8<br>
-    Milthm维度/100<br>
-    所有加成全局速率的升级被禁用<br>`},
+    Milthm维度/100，且倍率在1e5后受软上限限制<br>
+    所有加成全局速率的升级被禁用<br>
+    Ri层与XP层被完全禁用`},
     unlocked(){return hasAchievement('A',131)},
         },
 fmBox: {
   title: "IOS审核的浮木",
   body(){return "基于思木值，你可以进行重置以获得IOS审核的浮木！<br>思木值由Notes、歌曲、源点决定，购买更多的升级会增加更多影响思木值的因素！"},
+        },
+LRBox: {
+  title: "层级下架器",
+  body(){return "在这里结束一切吧！每下架一个层级，你将获得Notes^2的增益，但是该层级相关的内容也会被抹去！"},
         },
 },
     startData() { return {                  // startData is a function that returns default data for a layer. 
@@ -47,6 +52,9 @@ fmBox: {
         rift2filled:n(0),
         rift3filled:n(0),
         rift4filled:n(0),
+        rift5filled:n(0),
+        LRpower: n(0),
+        Layerorder: ['XP','Ri','J','Mi','Ro','SP','Ch','C','M','P','L','A','S','None'],
     }},
     symbol: 'IOS',
     branches:['ri','e'],
@@ -80,9 +88,11 @@ fmBox: {
         ['milestones',[4]],['bar','rift2'],['clickables',[2]],
         ['milestones',[5,6,7]],'blank',
         ['milestones',[8]],['bar','rift3'],['clickables',[3]],
-        ['milestones',[9,10]],'blank',
+        ['milestones',[9,10,11]],'blank',
         ['milestones',[12]],['bar','rift4'],['clickables',[4]],
-        ['milestones',[13]],'blank',
+        ['milestones',[13,14,15]],'blank',
+        ['milestones',[16]],['bar','rift5'],['clickables',[5]],
+        ['milestones',[17,18,19]],'blank',
      ],
     unlocked() {return gba('i',11).gte(1)}},
     "Reset and Upgrades": {
@@ -93,23 +103,34 @@ fmBox: {
         ['buyables',[2,3]],'upgrades'
      ],
     unlocked() {return gba('i',11).gte(1)}},
+    "Layer Remover": {
+        content: [ ["infobox","LRBox"],
+        ["display-text",function() {return "你有 <h2 style='color:#ff0000; text-shadow: 0 0 10px #c2b280'>"+format(player.i.LRpower)+"</h2> 下架能量"}],
+        ["display-text",function() {return "(+"+format(tmp.i.LRPspeed)+"/sec)"}],
+        ['buyables',[4]],['milestones',[20,21,22,23,24,25]]
+     ],
+    unlocked() {return hasMilestone('i',15)}},
 },
 doReset(resettingLayer){},
 update(diff){
     if(player.devSpeed.gt(0)) {player.i.fmshard = player.i.fmshard.add(tmp.i.effect.times(diff).div(player.devSpeed))
-    if(gcs('i',11)==1){player.i.rift1filled=player.i.rift1filled.add(player.a.points.times(0.02).times(diff).div(player.devSpeed))
+    if(gcs('i',11)==1){player.i.rift1filled=player.i.rift1filled.add(player.a.points.times(0.02).times(diff).div(player.devSpeed)).min(n(10).pow(n(10).pow(n(10).pow(0.5)).sub(1).times(10)).sub(1))
         player.a.points=player.a.points.sub(player.a.points.times(0.02).times(diff).div(player.devSpeed)).max(1)
     }
-    if(gcs('i',21)==1){player.i.rift2filled=player.i.rift2filled.add(player.p.points.times(0.02).times(diff).div(player.devSpeed))
+    if(gcs('i',21)==1){player.i.rift2filled=player.i.rift2filled.add(player.p.points.times(0.02).times(diff).div(player.devSpeed)).min(n(10).pow(n(10).pow(10).sub(1)).sub(1).times(10))
         player.p.points=player.p.points.sub(player.p.points.times(0.02).times(diff).div(player.devSpeed)).max(1)
     }
-    if(gcs('i',31)==1){player.i.rift3filled=player.i.rift3filled.add(player.c.points.times(0.02).times(diff).div(player.devSpeed))
+    if(gcs('i',31)==1){player.i.rift3filled=player.i.rift3filled.add(player.c.points.times(0.02).times(diff).div(player.devSpeed)).min(n(10).pow(200).sub(1))
         player.c.points=player.c.points.sub(player.c.points.times(0.02).times(diff).div(player.devSpeed)).max(1)
     }
-    if(gcs('i',41)==1){player.i.rift4filled=player.i.rift4filled.add(player.a.dr.times(0.02).times(diff).div(player.devSpeed))
+    if(gcs('i',41)==1){player.i.rift4filled=player.i.rift4filled.add(player.a.dr.times(0.02).times(diff).div(player.devSpeed)).min(n(10).pow(100).sub(1))
         player.a.dr=player.a.dr.sub(player.a.dr.times(0.02).times(diff).div(player.devSpeed)).max(1)
     }
+    if(gcs('i',51)==1){player.i.rift5filled=player.i.rift5filled.add(player.points.times(0.02).times(diff).div(player.devSpeed)).min(n(10).pow(1e10).sub(10))
+        player.points=player.points.sub(player.points.times(0.02).times(diff).div(player.devSpeed)).max(1)
+    }
     if(hasUpgrade('i',44)&&player.i.points.lt(player.i.best)) player.i.points=player.i.points.add(player.i.best.sub(player.i.points).times(tmp.i.pass1).times(diff).div(player.devSpeed))
+        if(hasMilestone('i',15)) player.i.LRpower=player.i.LRpower.add(tmp.i.LRPspeed.times(diff).div(player.devSpeed))
     }
     if (player.i.rift1filled.gt(n(10).pow(n(10).pow(n(10).pow(0.5)).sub(1).times(10)).sub(1))){player.i.rift1filled=n(10).pow(n(10).pow(n(10).pow(0.5)).sub(1).times(10)).sub(1)
         setClickableState('i',11,0)
@@ -117,10 +138,17 @@ update(diff){
     if (player.i.rift2filled.gt(n(10).pow(n(10).pow(10).sub(1)).sub(1).times(10))) {player.i.rift2filled=n(10).pow(n(10).pow(10).sub(1)).sub(1).times(10)
         setClickableState('i',21,0)
     }
-    if (player.i.rift3filled.gt(n(10).pow(200).sub(1))) {player.i.rift2filled=n(10).pow(200).sub(1)
+    if (player.i.rift3filled.gt(n(10).pow(200).sub(1))) {player.i.rift3filled=n(10).pow(200).sub(1)
         setClickableState('i',31,0)
     }
     if(player.i.points.gt(player.i.best)) player.i.points=player.i.best
+    if(hasMilestone('i',16)){player.devSpeed=n(0)
+        player.j.pdqj0 = n(100).add(tmp.i.rift5eff)
+        player.j.pdqj00 = n(100).add(tmp.i.rift5eff)
+        player.j.time=n(0)
+        if(hasMilestone('i',17)) player.j.pdqja = n(500).sub(tmp.i.rift5eff2)
+        setClickableState('j',11,1)
+   options.theme=themes[2]}
     },
 buyables: {
     11: {
@@ -331,6 +359,28 @@ buyables: {
                 return a
         },
     },
+    41: {
+        cost(x) {a= n(10).pow(x)
+                return a
+         },
+        title: '下架层级！',
+        display() { a="下架一个层级，并获得Notes^2的增益<br>效果：^"+format(this.effect())
+            a=a+"<br>需求："+format(this.cost())+"下架能量<br>下一个下架的层级："+player.i.Layerorder[gba('i',41)]
+        return a },
+        canAfford() { return player.i.LRpower.gte(this.cost()) },
+        effect(x){a = n(2).pow(x)
+            if(hasMilestone('i',25)) a=a.pow(tmp.i.mil25eff)
+            return a
+        },
+        buy() {
+            player.i.LRpower=player.i.LRpower.sub(this.cost())
+            setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+            doReset('i',true)
+        },
+        purchaseLimit(){a=n(13)
+                return a
+        },
+    },
 },
 upgrades: {
     11: {
@@ -500,6 +550,30 @@ upgrades: {
         description() {return "永久保留Ro层级升级"},
         cost: new Decimal(1e33),
         unlocked() {return hasUpgrade('i',62)},
+    },
+    64: {
+        title:'QoL专区-29',
+        description() {return "永久保留Rot点数与Ro层升级树，Rot点数x2"},
+        cost: new Decimal(5e33),
+        unlocked() {return hasUpgrade('i',63)},
+    },
+    65: {
+        title:'QoL专区-30',
+        description() {return "永久保留Ro层挑战，立即解锁Ro层第二行升级"},
+        cost: new Decimal(1e35),
+        unlocked() {return hasUpgrade('i',64)},
+    },
+    71: {
+        title:'QoL专区-31',
+        description() {return "永久保留Milthm层所有内容"},
+        cost: new Decimal(2e41),
+        unlocked() {return hasUpgrade('i',65)},
+    },
+    72: {
+        title:'QoL专区-32',
+        description() {return "RC4可以直接完成"},
+        cost: new Decimal(2e64),
+        unlocked() {return hasUpgrade('i',71)},
     },
     111: {
         title:'加成专区-1',
@@ -827,7 +901,7 @@ upgrades: {
     201: {
         title:'加成专区-46',
         description() {return "Cyten增益思木值获取<br>当前：x"+format(this.effect())},
-        effect(){return player.c.points.add(1).log(10).pow(0.5)},
+        effect(){return player.c.points.add(1).log(10).pow(0.5).add(1)},
         cost: new Decimal(1e29),
         unlocked() {return hasUpgrade('i',195)},
     },
@@ -837,6 +911,46 @@ upgrades: {
         effect(){return player.r.rota.add(1)},
         cost: new Decimal(3e31),
         unlocked() {return hasUpgrade('i',201)},
+    },
+    203: {
+        title:'加成专区-48',
+        description() {return "物量硬上限^2"},
+        cost: new Decimal(3e33),
+        unlocked() {return hasUpgrade('i',202)},
+    },
+    204: {
+        title:'加成专区-49',
+        description() {return "Lanota, Phigros, Cytus曲包共同加成思木值获取<br>当前：x"+format(this.effect())},
+        effect(){return gba('sp',12).add(gba('sp',13)).add(gba('sp',14)).add(1)},
+        cost: new Decimal(1e36),
+        unlocked() {return hasUpgrade('i',203)},
+    },
+    205: {
+        title:'加成专区-50',
+        description() {return "仅当在Ro层挑战时，Cytus能量x1e1000"},
+        cost: new Decimal(1e41),
+        unlocked() {return hasUpgrade('i',204)},
+    },
+    211: {
+        title:'加成专区-51',
+        description() {return "判定线加成思木值获取与Milthm维度<br>当前：x"+format(this.effect())},
+        effect(){return player.j.points.add(1)},
+        cost: new Decimal(2.5e61),
+        unlocked() {return hasUpgrade('i',205)},
+    },
+    212: {
+        title:'加成专区-52',
+        description() {return "上一个升级对Milthm维度的效果^10<br>当前：x"+format(this.effect())},
+        effect(){return player.j.points.add(1).pow(9)},
+        cost: new Decimal(1e64),
+        unlocked() {return hasUpgrade('i',211)},
+    },
+    213: {
+        title:'加成专区-53',
+        description() {return "基于IOS审核的浮木增益裂缝4效果<br>当前：^"+format(this.effect())},
+        effect(){return player.i.points.add(1).log(1e10).add(1)},
+        cost: new Decimal(1e67),
+        unlocked() {return hasUpgrade('i',212)},
     },
 },
 milestones: {
@@ -906,6 +1020,12 @@ milestones: {
         done() { return player.i.rift3filled.gte(n(10).pow(10).sub(1))&&gba('i',11).gte(1) },
         unlocked(){return hasMilestone('i',8)},
     },
+    11: {
+        requirementDescription: "裂缝3填充90%(约需1e180 Cyten)",
+        effectDescription() {return "裂缝3效果^4"},
+        done() { return player.i.rift3filled.gte(n(10).pow(180).sub(1))&&gba('i',11).gte(1) },
+        unlocked(){return hasMilestone('i',8)},
+    },
     12: {
         requirementDescription: "1旋律",
         effectDescription() {return "由于你拖审的时间太久了，玩家们对你进行了第四次大规模的攻击，你的谱面指数/3，但是IOS审核的浮木获取量x10，同时你获得第四个裂缝，你可以往里面填充龙以增益Note获取<br>当前：x"+format(tmp.i.rift4eff)},
@@ -917,6 +1037,83 @@ milestones: {
         effectDescription() {return "基于累计Milthm数量增益旋律获取<br>当前：x"+format(tmp.i.rift4eff2)},
         done() { return player.i.rift4filled.gte(9999)&&gba('i',11).gte(1) },
         unlocked(){return hasMilestone('i',12)},
+    },
+    14: {
+        requirementDescription: "裂缝4填充10%(约需1e10龙)",
+        effectDescription() {return "基于旋律数量增益Milthm维度倍率<br>当前：x"+format(tmp.i.rift4eff3)},
+        done() { return player.i.rift4filled.gte(n(10).pow(10).sub(1))&&gba('i',11).gte(1) },
+        unlocked(){return hasMilestone('i',12)},
+    },
+    15: {
+        requirementDescription: "裂缝4填充100%(约需1e100龙)",
+        effectDescription() {return "解锁层级下架器"},
+        done() { return player.i.rift4filled.gte(n(10).pow(100).sub(1))&&gba('i',11).gte(1) },
+        unlocked(){return hasMilestone('i',12)},
+    },
+    16: {
+        requirementDescription: "1判定线",
+        effectDescription() {return "由于你拖审的时间太久了，玩家们对你进行了第五次大规模的攻击，你被永久困在100ms判定区间内，但是IOS审核的浮木获取量^1.25，且永久保留判定里程碑，同时你获得第五个裂缝，你可以往里面填充Notes以增加实际生效判定区间<br>当前：+"+format(tmp.i.rift5eff)+'ms'},
+        done() { return player.j.points.gte(1)&&gba('i',11).gte(1) },
+        unlocked(){return hasMilestone('i',16)},
+        onComplete(){player.j.pdqj0 = n(100)
+        player.j.pdqj00 = n(100)
+        setClickableState('j',11,1)
+    options.theme=themes[2]
+    doReset('j',true)}
+    },
+    17: {
+        requirementDescription: "裂缝5填充30%(约需1e1000Note)",
+        effectDescription() {return "基于裂缝5填充进度增益最佳判定区间，并立即解锁第二行判定升级<br>当前：-"+format(tmp.i.rift5eff2)+'ms'},
+        done() { return player.i.rift5filled.gte(n(10).pow(1000).sub(10))&&gba('i',11).gte(1) },
+        unlocked(){return hasMilestone('i',16)},
+    },
+    18: {
+        requirementDescription: "裂缝5填充50%(约需1e100000Note)",
+        effectDescription() {return "基于裂缝5填充进度增益龙获取，判定线价格/250且不重置任何东西<br>当前：x"+format(tmp.i.rift5eff3)},
+        done() { return player.i.rift5filled.gte(n(10).pow(1e5).sub(10))&&gba('i',11).gte(1) },
+        unlocked(){return hasMilestone('i',16)},
+    },
+    19: {
+        requirementDescription: "裂缝5填充75%(约需e31622776Note)",
+        effectDescription() {return "基于Milthm增益龙获取<br>当前：x"+format(tmp.i.rift5eff4)},
+        done() { return player.i.rift5filled.gte(n(10).pow(n(10).pow(7.5)).sub(10))&&gba('i',11).gte(1) },
+        unlocked(){return hasMilestone('i',16)},
+    },
+    20: {
+        requirementDescription: "下架XP层级",
+        effectDescription() {return "基于超过1e100的IOS审核的浮木增益下架能量获取<br>当前：x"+format(tmp.i.mil20eff)},
+        done() { return gba('i',41).gte(1) },
+        unlocked(){return gba('i',41).gte(1)},
+    },
+    21: {
+        requirementDescription: "下架Ri层级",
+        effectDescription() {return "基于超过1e500的浮木碎片增益下架能量获取<br>当前：x"+format(tmp.i.mil21eff)},
+        done() { return gba('i',41).gte(2) },
+        unlocked(){return gba('i',41).gte(2)},
+    },
+    22: {
+        requirementDescription: "下架Mi层级",
+        effectDescription() {return "基于下架的层级数量增益下架能量获取<br>当前：x"+format(tmp.i.mil22eff)},
+        done() { return gba('i',41).gte(4) },
+        unlocked(){return gba('i',41).gte(4)},
+    },
+    23: {
+        requirementDescription: "下架Ro层级",
+        effectDescription() {return "基于下架能量增益下架能量获取<br>当前：x"+format(tmp.i.mil23eff)},
+        done() { return gba('i',41).gte(5) },
+        unlocked(){return gba('i',41).gte(5)},
+    },
+    24: {
+        requirementDescription: "下架C层级",
+        effectDescription() {return "基于下架能量增益IOS审核的浮木获取<br>当前：x"+format(tmp.i.mil24eff)},
+        done() { return gba('i',41).gte(8) },
+        unlocked(){return gba('i',41).gte(8)},
+    },
+    25: {
+        requirementDescription: "下架S层级",
+        effectDescription() {return "基于下架能量增益层级下架器效果<br>当前：^"+format(tmp.i.mil25eff)},
+        done() { return gba('i',41).gte(13) },
+        unlocked(){return gba('i',41).gte(13)},
     },
 },
 bars: {
@@ -964,6 +1161,17 @@ bars: {
         unlocked(){return hasMilestone('i',12)},
         fillStyle: {'background-color' : "#ff0000"},
     },
+    rift5: {
+        direction: RIGHT,
+        width: 600,
+        height: 36,
+        display(){
+      return "已填充Notes: " + format(player.i.rift5filled) + "，进度:" + format(this.progress().mul(100)) + "%"
+      },
+        progress() { return player.i.rift5filled.add(10).log(10).log(10).div(10) },
+        unlocked(){return hasMilestone('i',16)},
+        fillStyle: {'background-color' : "#ff0000"},
+    },
 },
 clickables: {
     11: {
@@ -976,7 +1184,7 @@ clickables: {
         onClick() {if(gcs(this.layer,this.id)==0) setClickableState(this.layer,this.id,1)
             else setClickableState(this.layer,this.id,0)
         },
-        canClick(){return (tmp.i.riftcounter.lt(2)||gcs(this.layer,this.id)==1)&&!n(tmp.i.bars.rift1.progress).gte(1)},
+        canClick(){return (tmp.i.riftcounter.lt(2)||gcs(this.layer,this.id)==1)},
     },
     21: {
         display() {a= "点击以填充裂缝2，再次点击取消填充<br>当前"
@@ -988,7 +1196,7 @@ clickables: {
         onClick() {if(gcs(this.layer,this.id)==0) setClickableState(this.layer,this.id,1)
             else setClickableState(this.layer,this.id,0)
         },
-        canClick(){return (tmp.i.riftcounter.lt(2)||gcs(this.layer,this.id)==1)&&!n(tmp.i.bars.rift2.progress).gte(1)},
+        canClick(){return (tmp.i.riftcounter.lt(2)||gcs(this.layer,this.id)==1)},
     },
     31: {
         display() {a= "点击以填充裂缝3，再次点击取消填充<br>当前"
@@ -1000,7 +1208,7 @@ clickables: {
         onClick() {if(gcs(this.layer,this.id)==0) setClickableState(this.layer,this.id,1)
             else setClickableState(this.layer,this.id,0)
         },
-        canClick(){return (tmp.i.riftcounter.lt(2)||gcs(this.layer,this.id)==1)&&!n(tmp.i.bars.rift2.progress).gte(1)&&player.c.points.gte(1)},
+        canClick(){return (tmp.i.riftcounter.lt(2)||gcs(this.layer,this.id)==1)&&player.c.points.gte(1)},
     },
     41: {
         display() {a= "点击以填充裂缝4，再次点击取消填充<br>当前"
@@ -1012,7 +1220,19 @@ clickables: {
         onClick() {if(gcs(this.layer,this.id)==0) setClickableState(this.layer,this.id,1)
             else setClickableState(this.layer,this.id,0)
         },
-        canClick(){return (tmp.i.riftcounter.lt(2)||gcs(this.layer,this.id)==1)&&!n(tmp.i.bars.rift4.progress).gte(1)&&player.a.dr.gte(1)},
+        canClick(){return (tmp.i.riftcounter.lt(2)||gcs(this.layer,this.id)==1)&&player.a.dr.gte(1)},
+    },
+    51: {
+        display() {a= "点击以填充裂缝5，再次点击取消填充<br>当前"
+            if (gcs(this.layer,this.id)==0) a=a+'<h2>不在</h2>填充裂缝5'
+            if (gcs(this.layer,this.id)==1) a=a+'<h2>正在</h2>填充裂缝5'
+            return a
+        },
+        unlocked(){return hasMilestone('i',16)},
+        onClick() {if(gcs(this.layer,this.id)==0) setClickableState(this.layer,this.id,1)
+            else setClickableState(this.layer,this.id,0)
+        },
+        canClick(){return (tmp.i.riftcounter.lt(2)||gcs(this.layer,this.id)==1)},
     },
 },
 fmgain(){a = player.points.add(1).log(1e200)
@@ -1034,7 +1254,11 @@ fmgain(){a = player.points.add(1).log(1e200)
     if(hasUpgrade('i',194)) d = d.times(upgradeEffect('i',194))
     if(hasUpgrade('i',201)) d = d.times(upgradeEffect('i',201))
     if(hasUpgrade('i',202)) d = d.times(upgradeEffect('i',202))
+    if(hasUpgrade('i',204)) d = d.times(upgradeEffect('i',204))
+    if(hasUpgrade('i',211)) d = d.times(upgradeEffect('i',211))
+    if(hasMilestone('i',24)) d=d.times(tmp.i.mil24eff)
     if(hasMilestone('i',12)) d=d.times(10)
+    if(hasMilestone('i',16)) d=d.pow(1.25)
     return d
 },
 getResetGain(){a = tmp.i.fmgain.sub(player.i.points).max(0)
@@ -1069,13 +1293,31 @@ rift2eff3(){a = gba('i',21).pow(0.01)
     return a
 },
 rift3eff(){a = player.i.rift3filled.add(1).pow(2.5)
+    if(hasMilestone('i',11)) a=a.pow(4)
     return a
 },
 rift4eff(){a = n(10).pow(player.i.rift4filled)
     if (a.gte('1e1000000')) a=n(10).pow(a.log(10).div(1000000).pow(0.25).times(1000000))
+    if (a.gte('1e2e8')) a=n(10).pow(a.log(10).div(2e8).pow(0.1).times(2e8))
+    if(hasUpgrade('i',213)) a=a.pow(upgradeEffect('i',213))
     return a
 },
 rift4eff2(){a = player.mi.total.max(1).pow(0.3)
+    return a
+},
+rift4eff3(){a = player.r.points.max(10).log(10)
+    return a
+},
+rift5eff(){a = tmp.i.bars.rift5.progress.times(100)
+    return a
+},
+rift5eff2(){a = tmp.i.bars.rift5.progress.times(400)
+    return a
+},
+rift5eff3(){a = n(10).pow(tmp.i.bars.rift5.progress.times(10))
+    return a
+},
+rift5eff4(){a = player.mi.points.pow(0.1)
     return a
 },
 riftcounter(){a=n(0)
@@ -1083,6 +1325,7 @@ riftcounter(){a=n(0)
     if(gcs('i',21)==1) a=a.add(1)
     if(gcs('i',31)==1) a=a.add(1)
     if(gcs('i',41)==1) a=a.add(1)
+    if(gcs('i',51)==1) a=a.add(1)
         return a
 },
 pass1(){a=n(0)
@@ -1090,5 +1333,31 @@ pass1(){a=n(0)
     if (hasUpgrade('i',45)) a=n(0.1)
     if (hasUpgrade('i',51)) a=n(0.3)
         return a
+},
+LRPspeed(){a=n(0.01)
+    if(hasMilestone('i',20)) a=a.times(tmp.i.mil20eff)
+    if(hasMilestone('i',21)) a=a.times(tmp.i.mil21eff)
+    if(hasMilestone('i',22)) a=a.times(tmp.i.mil22eff)
+    if(hasMilestone('i',23)) a=a.times(tmp.i.mil23eff)
+    if(hasAchievement('A',145)) a=a.times(100)
+    return a
+},
+mil20eff(){a=player.i.points.div(1e99).max(10).log(10)
+    return a
+},
+mil21eff(){a=player.i.fmshard.div('1e499').max(10).log(10).pow(0.5)
+    return a
+},
+mil22eff(){a=n(2).pow(gba('i',41))
+    return a
+},
+mil23eff(){a=player.i.LRpower.pow(0.33)
+    return a
+},
+mil24eff(){a=player.i.LRpower.pow(10)
+    return a
+},
+mil25eff(){a=player.i.LRpower
+    return a
 },
 })

@@ -81,7 +81,8 @@ chalBox: {
     hotkeys: [
      {key: "r", description: "R： Reset for Rotaeno", onPress(){if(canReset(this.layer)&&hasMilestone('r',0)) doReset(this.layer)}},
     ],
-    layerShown(){ return hasUpgrade('sp',27)||player.r.total.gte(1)||hasAchievement('A',111)},
+    deactivated(){return gba('i',41).gte(5)},
+    layerShown(){ return (hasUpgrade('sp',27)||player.r.total.gte(1)||hasAchievement('A',111))&&!gba('i',41).gte(5)},
     rotCal() {
      let rot=player.r.rota
      if(inChallenge('r',11)) rot=rot.div(2.4)
@@ -91,6 +92,7 @@ chalBox: {
     },
     rotaCal() {
      let rot=gba('r',11).add(gba('r',12)).add(gba('r',13))
+     if(hasUpgrade('i',64)) rot=rot.times(2)
      if(hasUpgrade('j',11)) rot=rot.mul(1.1)
      if(hasUpgrade('sp',54)) rot=rot.mul(1.05)
      if(hasUpgrade('sp',55)&&rot.gte(180)) rot=rot.sub(180).mul(2).add(180)
@@ -180,6 +182,8 @@ return mult
      if (resettingLayer == 'i') kept = []
      if(hasUpgrade('i',62)) kept.push("milestones")
       if(hasUpgrade('i',63)) kept.push("upgrades")
+      if(hasUpgrade('i',64)) kept.push("buyables","clickables")
+      if(hasUpgrade('i',65)) kept.push("challenges")
       layerDataReset(this.layer, kept)
      }
     },
@@ -1256,7 +1260,7 @@ if(eff.log10().gte(500)) eff = n(10).pow(eff.log10().sub(500).pow(0.8).add(500))
     21:{ title: "Rot助推 VII",
    description: "解锁Phidata曲包，解锁第七行升级树",
     cost: n(5000),
-    unlocked() {return hasChallenge('r',11)},
+    unlocked() {return hasChallenge('r',11)||hasUpgrade('i',65)},
     },
     22:{ title: "Rot助推 VIII",
    description: "Rot升级31和32对Cyten的额外增益也生效",
@@ -1457,7 +1461,7 @@ if(eff.log10().gte(500)) eff = n(10).pow(eff.log10().sub(500).pow(0.8).add(500))
      completionLimit(){
    return n(5)},
      canComplete: function() {
-   return getPointGen().gte(this.a().add(n(challengeCompletions(this.layer,this.id)).mul(60000)))},
+   return getPointGen().gte(this.a().add(n(challengeCompletions(this.layer,this.id)).mul(60000)))||hasUpgrade('i',72)},
    }, 
    },
 })//Rotaeno
@@ -1504,7 +1508,8 @@ buyBoost:n(2),//购买维度倍率
     },
     getNextAt() {return n(0)},
     row: 4, 
-    layerShown(){ return hasUpgrade('r',37)||hasAchievement('A',111)},
+deactivated(){return gba('i',41).gte(4)},
+    layerShown(){ return (hasUpgrade('r',37)||hasAchievement('A',111))&&!gba('i',41).gte(4)},
     update(diff) {
      if(player.devSpeed.gt(0)) {
       if(tmp.mi.buyables[21].effect.gt(0)) player.mi.points=player.mi.points.add(tmp.mi.buyables[21].effect.mul(player.mi.dim1).mul(diff).div(player.devSpeed))
@@ -1550,6 +1555,11 @@ buyBoost:n(2),//购买维度倍率
     if(gcs("r",143)==1) a = a.times(clickableEffect("r", 143))
     if(tmp.ri.mil1.gte(1)) a=a.times(tmp.ri.mil1)
     if(gba('i',11).gte(1)) a = a.div(100)
+    if(hasAchievement('A',142)) a=a.times(10)
+    if(hasMilestone('i',14)) a=a.times(tmp.i.rift4eff3)
+    if(hasUpgrade('i',211)) a=a.times(upgradeEffect('i',211))
+    if(hasUpgrade('i',212)) a=a.times(upgradeEffect('i',212))
+    if(a.gte(100000)) a=a.div(100000).pow(0.5).times(100000)
      return a
     },//计算维度的其他倍率
     buyBoost() {
@@ -1605,6 +1615,7 @@ doReset(resettingLayer) {
      if(hasMilestone('ri',7)) kept.push("points")
       }
     if (resettingLayer == 'i') kept = []
+    if(hasUpgrade('i',71)) kept.push("buyables","dim1","dim2","dim3","dim4","dim5","dim6","dim7","dim8","dim9","milestones","upgrades","points","total")
       layerDataReset(this.layer, kept)
      }
     },
@@ -2145,7 +2156,10 @@ theme:"default",
 clickables: {[11]: 0},
     }},
      color: "#e786f0",
-    requires: n(1250), 
+    requires() {a=n(1250)
+  if(hasMilestone('i',18)) a=a.div(250)
+    return a
+}, 
     resource: "判定线",
     roundUpCost:true,
     baseResource: "谱面", 
@@ -2153,6 +2167,7 @@ clickables: {[11]: 0},
     type: "static", 
     branches(){return ['c','sp','ch']},
     exponent: 1, 
+deactivated(){return gba('i',41).gte(3)},
     gainMult() { //jgainmult
         mult = n(1)
         return mult
@@ -2169,11 +2184,11 @@ clickables: {[11]: 0},
     hotkeys: [
         {key: "j", description: "J： Reset for Judgment",onPress(){if(canReset(this.layer)) doReset(this.layer)}},
     ],
-    resetsNothing() {return hasMilestone('ri',4)&&!gcs('j',11)==1},
-    canReset() {return !gcs('j',11)==1&&player.ch.points.gte(tmp.j.nextAt)},
+    resetsNothing() {return (hasMilestone('ri',4)&&!gcs('j',11)==1)||hasMilestone('i',18)},
+    canReset() {return (!gcs('j',11)==1||hasMilestone('i',18))&&player.ch.points.gte(tmp.j.nextAt)},
     canBuyMax(){return hasMilestone('ri',10)},
     autoPrestige() {return hasMilestone('ri',4)},
-    layerShown(){ return hasUpgrade('r',47)||hasAchievement('A',111)},
+    layerShown(){ return (hasUpgrade('r',47)||hasAchievement('A',111))&&!gba('i',41).gte(3)},
     tabFormat: {
     "Milestones": {
         content: [ ["infobox","introBox"],
@@ -2375,6 +2390,7 @@ doReset(resettingLayer) {
      if(hasMilestone('ri',4)) kept.push("pdqja","pdqj")
       }
     if (resettingLayer == 'i') kept = []
+    if(hasMilestone('i',16)) kept.push("milestones","points")
       layerDataReset(this.layer, kept)
      }
     },
@@ -2481,7 +2497,7 @@ doReset(resettingLayer) {
     else return "退出判定区间挑战！"}
    }
      },
-     canClick() {return !inChallenge('ri',11)},
+     canClick() {return !inChallenge('ri',11)&&!gba('i',11).gte(1)},
      onClick() {
    player.j.time=n(0)
    if (gcs('j',11)==0) {
@@ -2574,7 +2590,7 @@ doReset(resettingLayer) {
   },
     21:{ 
     fullDisplay() {return "未影人2004<br>Milthm增益Notes获取量（判定区间挑战内削弱）<br>当前效果: ×"+format(this.effect())+"<br>需求：通过445ms判定区间挑战"},
-    unlocked() {return hasMilestone('j',6)},
+    unlocked() {return hasMilestone('j',6)||hasMilestone('i',17)},
     canAfford() {return player.j.pdqja.lte(445)},
     effect() {let m=player.mi.points.max(10)
      let a=m.pow(m.log(10))
@@ -2714,12 +2730,16 @@ colBox: {
 	  	theme:"default",
     }},
     color: "#eeffd1",
-    requires: n(1e42), 
+    requires() {a=n(1e42)
+      if(gba('i',11).gte(1))a=n(1e310)
+        return a
+    }, 
     resource: "Dot",
     baseResource: "旋律", 
     baseAmount() {return player.r.points}, 
     type: "normal", 
     exponent: 1, 
+    deactivated(){return gba('i',41).gte(2)},
     passiveGeneration() {
      let a=n(0)
      if(hasUpgrade('j',35)) a=n(0.00001)
@@ -2747,7 +2767,7 @@ colBox: {
     },
     branches(){return ['r','mi','j']},
     row: 5, 
-    layerShown(){ return hasUpgrade('j',31)||hasAchievement('A',111)},
+    layerShown(){ return (hasUpgrade('j',31)||hasAchievement('A',111))&&!gba('i',41).gte(2)},
     riz1() {
      let a=n(1)
      let b=player.ri.songs
@@ -3517,13 +3537,17 @@ asBox: {
 		assigned: [n(0),n(0),n(0),n(0),n(0),n(0),n(0)],
     }},
      color: "#ff7700",
-    requires: n(5e11), 
+    requires() {a=n(5e11)
+      if(gba('i',11).gte(1)) a=n(1e310)
+        return a
+    }, 
     resource: "经验",
     baseResource: "实力值", 
     baseAmount() {return tmp.e.baseCal}, 
     type: "normal", 
     branches(){return ['r','mi','j']},
     exponent:0.9,
+    deactivated(){return gba('i',41).gte(1)},
     passiveGeneration() {
      let pass=n(0)
      if(hasMilestone('e',6)) pass=n(3e-7)
@@ -3550,6 +3574,7 @@ asBox: {
     baseCal() {
      let base = player.m.points.mul(player.ch.points.mul(player.j.points.mul(player.a.ptt.mul(player.p.rks))))
      if(clickableEffect('e',12).gt(0)&&player.j.pdqja.lt(250)) base=base.mul(n(n(250).sub(player.j.pdqja)).max(1).pow(clickableEffect('e',12)))
+      if(gba('i',11).gte(1))base=n(0)
      return base
     },
     getResetGain() {
@@ -3601,7 +3626,7 @@ asBox: {
     hotkeys: [
      {key: "e", description: "E: Reset for Experiences", onPress(){if(canReset(this.layer)) doReset(this.layer)}},
     ],
-    layerShown(){ return hasUpgrade('ri',37)||hasAchievement('A',111)},
+    layerShown(){ return (hasUpgrade('ri',37)||hasAchievement('A',111))&&!gba('i',41).gte(1)},
     tabFormat: {
     "Milestones": {
         content: [ ["infobox","introBox"],

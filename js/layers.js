@@ -450,6 +450,41 @@ QqQ="QqQe308";banana="3.8642180e38642180";Liu="6.666666666666666666666666e308";f
    tooltip:"与其他音游联动15次及以上！",
    textStyle: {'color': '#3b4f7c'},
    },
+   121: {
+   name: "菜，就多练",
+   done() {return player.e.points.gte(1)},
+   onComplete(){player.A.ach=player.A.ach.add(1)},
+   tooltip:"获得1经验（第13层资源）",
+   textStyle: {'color': '#ff7700'},
+   },
+  122: {
+   name: "不可能联动",
+   done() {return gba('ri',15).gte(5)},
+   onComplete(){player.A.ach=player.A.ach.add(1)},
+   tooltip:"和Arcaea进行5次联动",
+   textStyle: {'color': '#8f24f9'},
+   },
+  123: {
+   name: "无需再痛苦",
+   done() {return hasMilestone('e',6)},
+   onComplete(){player.A.ach=player.A.ach.add(1)},
+   tooltip:"被动获取经验！",
+   textStyle: {'color': '#e18f0a'},
+   },
+  124: {
+   name: "遗忘的挑战",
+   done() {return n(challengeCompletions('ri',12)).gte(5)},
+   onComplete(){player.A.ach=player.A.ach.add(1)},
+   tooltip:"通关RiC2五次",
+   textStyle: {'color': '#957804'},
+   },
+  125: {
+   name: "星系生成器?",
+   done() {return hasUpgrade('ri',47)},
+   onComplete(){player.A.ach=player.A.ach.add(1)},
+   tooltip:"解锁曲库生成器<br>在反物质维度中，星系生成器是一种强大的后期功能，可以直接使游戏通关",
+   textStyle: {'color': '#052480'},
+   },
    131: {
    name(){a = '???'
     if (hasAchievement('A',131)) a='我们IOS玩家是这样的'
@@ -524,6 +559,58 @@ QqQ="QqQe308";banana="3.8642180e38642180";Liu="6.666666666666666666666666e308";f
    onComplete(){player.A.ach=player.A.ach.add(1)},
    tooltip(){a = '???'
     if(hasAchievement('A',131))a = '以IOS审核的身份获得一个旋律'
+    return a
+   },
+   textStyle: {'color': '#ff0000'},
+   },
+   142: {
+   name(){a = '???'
+    if (hasAchievement('A',131)) a='残酷的打击<br>V🏆'
+    return a
+   },
+   done() {return hasMilestone('i',16)},
+   onComplete(){player.A.ach=player.A.ach.add(1)},
+   tooltip(){a = '???'
+    if(hasAchievement('A',131))a = '以IOS审核的身份获得一个判定线<br>奖励：Milthm维度倍率x10'
+    return a
+   },
+   textStyle: {'color': '#ff0000'},
+   },
+   143: {
+   name(){a = '???'
+    if (hasAchievement('A',131)) a='疯狂的增长'
+    return a
+   },
+   done() {return n(tmp.i.bars.rift5.progress).gte(0.7)},
+   onComplete(){player.A.ach=player.A.ach.add(1)},
+   tooltip(){a = '???'
+    if(hasAchievement('A',131))a = '在判定区间挑战中获得e1e7Notes并填充'
+    return a
+   },
+   textStyle: {'color': '#ff0000'},
+   },
+   144: {
+   name(){a = '???'
+    if (hasAchievement('A',131)) a='nimenwanle'
+    return a
+   },
+   done() {return hasMilestone('i',15)},
+   onComplete(){player.A.ach=player.A.ach.add(1)},
+   tooltip(){a = '???'
+    if(hasAchievement('A',131))a = '解锁层级下架器'
+    return a
+   },
+   textStyle: {'color': '#ff0000'},
+   },
+   145: {
+   name(){a = '???'
+    if (hasAchievement('A',131)) a='结束了🏆'
+    return a
+   },
+   done() {return hasMilestone('i',25)},
+   onComplete(){player.A.ach=player.A.ach.add(1)},
+   tooltip(){a = '???'
+    if(hasAchievement('A',131))a = '下架所有层级<br>奖励：下架能量获取x100'
     return a
    },
    textStyle: {'color': '#ff0000'},
@@ -1352,9 +1439,10 @@ if(hasAchievement('A',71)) exp=exp.add(0.1)
     ],
     deactivated(){de = false
       if(inChallenge('p',13))de = true
+      if(gba('i',41).gte(13))de=true
       return de
     },
-    layerShown(){return true},
+    layerShown(){return !gba('i',41).gte(13)},
     tabFormat: {
    "General": {
         content: [ ["infobox","introBox"],
@@ -1796,7 +1884,7 @@ addLayer("a", {
     row: 1, 
     branches() {return ['s']},
     deactivated(){
-      return inChallenge('p',13)
+      return inChallenge('p',13)||gba('i',41).gte(12)
     },
     scCal() {
       sc=n(4000)
@@ -1877,6 +1965,8 @@ return eff
       dr=sn.div(1e5).pow(0.2)
       if(hasUpgrade('sp',24)) dr=dr.times(upgradeEffect('sp',24))
       if(hasUpgrade('sp',26)) dr=dr.times(2)
+      if(hasMilestone('i',18)) dr=dr.times(tmp.i.rift5eff3)
+        if(hasMilestone('i',19)) dr=dr.times(tmp.i.rift5eff4)
       return dr
     },
     drEff1() {
@@ -1928,7 +2018,7 @@ return eff
      }
 		},
     layerShown(){
-    return player.a.points.gt(0)||player.a.unlocked()||hasAchievement('A',111)},
+    return (player.a.points.gt(0)||player.a.unlocked()||hasAchievement('A',111))&&!gba('i',41).gte(12)},
  passiveGeneration(){
    mult = n(0)
   if(hasUpgrade('s',17))
@@ -2483,9 +2573,11 @@ addLayer("l", {
     hotkeys: [
         {key: "l", description: "L: Reset for Lanota", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
+    deactivated(){return gba('i',41).gte(11)},
     layerShown(){shown=hasAchievement('A',111)
     if(hasChallenge('a',14)){shown=true}
     if(hasMilestone('p',0)){shown=true}
+    if(gba('i',41).gte(11))shown=false
     return shown},
     autoPrestige() {return hasUpgrade('p',12)},
     resetsNothing() {return hasUpgrade('p',12)},
@@ -2773,9 +2865,11 @@ addLayer("p", {
     hotkeys: [
         {key: "p", description: "P: Reset for Phigros", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
+    deactivated(){return gba('i',41).gte(10)},
     layerShown(){shown=hasAchievement('A',111)
     if(hasUpgrade('a',27)){shown=true}
     if(hasMilestone('p',0)){shown=true}
+    if(gba('i',41).gte(10))shown=false
     return shown},
     doReset(resettingLayer) {
         if (layers[resettingLayer].row > layers[this.layer].row) {
@@ -3267,9 +3361,11 @@ addLayer("m", {
      layerDataReset(this.layer, kept)
         }
     },
+    deactivated(){return gba('i',41).gte(9)},
     layerShown(){shown= hasAchievement('A',111)
     if(hasUpgrade('p',27)){shown=true}
     if(hasMilestone('m',0)){shown=true}
+    if(gba('i',41).gte(9)) shown =false
     return shown},
   softcap:n (1e1000000),
   softcapPower:n(0.05),
@@ -3453,6 +3549,7 @@ addLayer("c", {
         if (gcs("r",181)==1) mult = mult.times(clickableEffect("r", 181))
       if(gba('i',31).gte(1)) mult = mult.times(buyableEffect('i',31))
         if(tmp.i.rift3eff.gte(1)) mult = mult.times(tmp.i.rift3eff)
+        if(hasUpgrade('i',205)&&(inChallenge('r',11)||inChallenge('r',12)||inChallenge('r',13)||inChallenge('r',14))) mult=mult.times('1e1000')
       
       if(hasUpgrade('c',14)) mult = mult.pow(1.1)
       if(buyableEffect('c',43)>1) mult = mult.pow(buyableEffect('c',43))
@@ -3496,7 +3593,8 @@ addLayer("c", {
     hotkeys: [
         {key: "c", description: "C： Reset for Cytus",onPress(){if (canReset(this.layer)) doReset(this.layer)} },
     ],
-    layerShown(){ return hasUpgrade('a',37)||hasMilestone('c',0)||hasAchievement('A',111)
+    deactivated(){return gba('i',41).gte(8)},
+    layerShown(){ return (hasUpgrade('a',37)||hasMilestone('c',0)||hasAchievement('A',111))&&!gba('i',41).gte(8)
     },
     update(diff) {
      if(player.devSpeed.neq(0)) {
@@ -4312,7 +4410,9 @@ addLayer("ch", {
     if(hasUpgrade('ch',33)) mult=mult.times(1.1)
       if(hasMilestone('i',10)) mult=mult.times(1.1)
     if(buyableEffect('c',31)>1) exp = exp.times(buyableEffect('c',31))
-      return mult.min(n(4000).add(clickableEffect('e',16)))
+      a=n(4000).add(clickableEffect('e',16))
+    if(hasUpgrade('i',203)) a=a.pow(2)
+      return mult.min(a)
     },
     dif() {
       dif = player.ch.note.div(50).pow(0.8).max(1)
@@ -4403,7 +4503,8 @@ addLayer("ch", {
     hotkeys: [
         {key: "h", description: "H: Reset for charts", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
-    layerShown(){ return hasUpgrade('c',17)||hasAchievement('A',111)},
+    deactivated(){return gba('i',41).gte(7)},
+    layerShown(){ return (hasUpgrade('c',17)||hasAchievement('A',111))&&!gba('i',41).gte(7)},
     update(diff) {
      if(player.devSpeed.neq(0)) {
 			player.ch.note = tmp.ch.note.max(player.ch.note)
@@ -5055,7 +5156,8 @@ points: n(0),
     hotkeys: [
         {key: "o", description: "O： Reset for Song Pack", onPress(){if(canReset(this.layer)&&hasMilestone('sp',0)) doReset(this.layer)}},
     ],
-    layerShown(){ return hasUpgrade('ch',37)||hasAchievement('A',111)},
+deactivated(){return gba('i',41).gte(6)},
+    layerShown(){ return (hasUpgrade('ch',37)||hasAchievement('A',111))&&!gba('i',41).gte(6)},
     resetsNothing() {return hasMilestone('r',4)},
     canBuyMax(){return hasMilestone('r',5)},
     autoPrestige() {return hasMilestone('r',4)},
@@ -5238,6 +5340,7 @@ buyables:{
 				cost(x=player[this.layer].buyables[this.id]) { // cost for buying xth buyable, can be an object if there are multiple currencies
      if (x.gte(25)) x = x.pow(2).div(25)
      let cost = n(1e5).pow(x.pow(1.2)).mul("1e320")
+    if(gba('i',11).gte(1)) cost = cost.times('1e150')
     return cost
          },
 				effect(x=player[this.layer].buyables[this.id]) {return x},

@@ -15,12 +15,12 @@ let VERSION = {
 	name: "Final Update",
 }
 
-let winText = `恭喜通关！你已经完成了你的音游之旅…吗？请期待下一个更新……<br>当前结局：e9e15 Notes，下一个更新…还会有吗`
+let winText = `恭喜通关！你已经完成了你的音游之旅…吗？请期待下一个更新……<br>当前结局：ee9e15 Notes，下一个更新…还会有吗`
 
 // Determines when the game "ends"
 function isEndgame() {
-	//return player.points.gte('e9e15')
-	return false
+	return player.points.gte('ee9e15')
+	//return false
 }
 
 // Display extra things at the top of the page
@@ -34,7 +34,7 @@ var displayThings = [
    if(gcs('S',14)) b=b+"<br>课题力量: "+format(player.ch.enp)
    if(gcs('S',15)) b=b+"<br>填充Notes: "+format(player.r.notes)
    if(gcs('S',16)) b=b+"<br>游玩时长: "+formatTime(player.timeplayed)
-   let a= "v0.6游戏结局: e9.000e15 Notes！"
+   let a= "v0.6游戏结局: ee9.000e15 Notes！"
    if(inChallenge('r',12)&&player.devSpeed.eq(0)) a=a+"<br>你需要在Rot升级树里选择升级，并且点击升级12确定以开始挑战！"
   if(isEndgame()) a=a+"<br>恭喜通关！"
   if(getPointGen().gte(player.pointSoftcapStart.pow(0.9))) a=a+"<br>Notes获取量在"+format(player.pointSoftcapStart)+"达到软上限！<br>软上限效果:超过部分^"+format(player.pointSoftcapPower,3)
@@ -43,9 +43,9 @@ var displayThings = [
 ]
 
 let changelog = `<h1>更新日志</h1><br>
-<h2>v0.6 Final Update 2025/08/22~2025/0?/??<br>
+<h2>v0.6 Final Update 2025/08/22~2026/02/26<br>
 <h3>- 添加一个层级：IOS审核<br>
-- 游戏结局：e9e15 Notes<br><br>
+- 游戏结局：ee9.000e15 Notes<br><br>
 <h2>v0.599 Stop Updating 2025/08/21<br>
 <h3>- 游戏(长期)停更<br>
 <h3>- 修复vue.js<br><br>
@@ -133,8 +133,8 @@ function getStartPoints(){
 
 // Determines if it should show points/sec
 function canGenPoints(){
-return !player.points.gte('e9e15')
-//return true
+//return !player.points.gte('e9e15')
+return true
 }
 
 // Calculate points/sec!
@@ -199,6 +199,7 @@ if (hasUpgrade('sp', 27)) gain = gain.pow(1.001)
 if (hasAchievement('A', 65)) gain = gain.pow(1.0101)
 if(tmp.a.drEff4.gte(1)) gain=gain.pow(tmp.a.drEff4)
 	if(hasMilestone('i',7)) gain = gain.pow(tmp.i.rift2eff3)
+	if(hasMilestone('i',15)) gain=gain.pow(buyableEffect('i',41))
 
 
 if(inChallenge('p',12)){gain= gain.pow(0.1)}
