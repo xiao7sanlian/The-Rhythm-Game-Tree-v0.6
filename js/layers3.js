@@ -152,9 +152,9 @@ update(diff){
     },
 buyables: {
     11: {
-        cost(x) { return n('1e39000000') },
+        cost(x) { return n('1e5e8') },
         title: '成为IOS审核',
-        display() { return "警告：一旦成为了IOS审核，你将重置之前的所有内容！此操作无法撤销！<br>需求：e3.9e7 Notes" },
+        display() { return "警告：一旦成为了IOS审核，你将重置之前的所有内容！此操作无法撤销！<br>需求：e5e8 Notes" },
         canAfford() { return player.points.gte(this.cost()) },
         buy() {
             setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))

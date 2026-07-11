@@ -11,7 +11,7 @@ let modInfo = {
 }
 // Set your version in num and name
 let VERSION = {
-	num: "0.6",
+	num: "0.61",
 	name: "Final Update",
 }
 
@@ -43,6 +43,8 @@ var displayThings = [
 ]
 
 let changelog = `<h1>更新日志</h1><br>
+<h2>v0.61 Fix bug 2026/07/11<br>
+<h3>- 修复了一个会导致IOS审核外一些加成被削弱的bug<br><br>
 <h2>v0.6 Final Update 2025/08/22~2026/02/26<br>
 <h3>- 添加一个层级：IOS审核<br>
 - 游戏结局：ee9.000e15 Notes<br><br>

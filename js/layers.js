@@ -19,7 +19,7 @@ addLayer("A", {
         return ("成就")
     },
     update(diff) {
-     player.devSpeed=layers.A.devSpeedCal()
+     player.devSpeed=layers.A.devSpeedCal().min(1e12)
      if(player.devSpeed.neq(0)) {
      if(player.r.rot.lt(0)) {
       confirm("你触发了一个bug！Rot点数现在是负数了！这大概是因为你点升级树点得太快了！将强制重置Rot升级树")
@@ -46,6 +46,7 @@ QqQ="QqQe308";banana="3.8642180e38642180";Liu="6.666666666666666666666666e308";f
 	    if(gcs("r",112)==1) dev = dev.mul(clickableEffect("r", 112))
 	    if(hasUpgrade('r',37)) dev=dev.mul(3)
       if(dev.gte(1e12)) dev = n(1e12)
+      if(!player.points.lt('1e5e8')) dev=n(0)
 	    if(isEndgame()) dev=n(0)
 	    
 	    dev=dev.pow(tmp.ri.riz2)
@@ -1403,7 +1404,7 @@ addLayer("s", {
      
 
 if(!hasChallenge('c',12)) exp=exp.min(12.5)
- if(exp.gt(12.5)) exp = exp.div(12.5).pow(0.3).times(12.5)
+ if(exp.gt(12.5)&&gba('i',11).gte(1)) exp = exp.div(12.5).pow(0.3).times(12.5)
 if(hasAchievement('A',71)) exp=exp.add(0.1)
   if(gba('i',11).gte(1)) exp = exp.div(4)
   if(hasMilestone('i',0))exp = exp.div(1.5)
@@ -1863,7 +1864,7 @@ addLayer("a", {
      
      if(tmp.a.snEff5.gte(0)) exp=exp.add(tmp.a.snEff5)
      if(!hasChallenge('c',12)) exp=exp.min(4.5)
-      if(exp.gt(4.5)) exp = exp.div(4.5).pow(0.3).times(4.5)
+      if(exp.gt(4.5)&&gba('i',11).gte(1)) exp = exp.div(4.5).pow(0.3).times(4.5)
       if(gba('i',11).gte(1)) exp = exp.div(4)
       return exp
     },
@@ -4430,7 +4431,7 @@ addLayer("ch", {
     dragEff() {
       drag = player.ch.drag.add(1).log(10).div(10).add(1).min(1.5)
     drag=drag.pow(player.ch.dif.max(1).log(10).add(1)).min(2)
-    if(drag.gte(1.15)) drag = drag.div(1.15).pow(0.25).times(1.15)
+    if(drag.gte(1.15)&&gba('i',11).gte(1)) drag = drag.div(1.15).pow(0.25).times(1.15)
       return drag},
     flickEff() {
       flick = player.ch.flick.add(1).log(5).div(5).add(1).min(2)
