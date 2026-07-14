@@ -1559,7 +1559,7 @@ deactivated(){return gba('i',41).gte(4)},
     if(hasMilestone('i',14)) a=a.times(tmp.i.rift4eff3)
     if(hasUpgrade('i',211)) a=a.times(upgradeEffect('i',211))
     if(hasUpgrade('i',212)) a=a.times(upgradeEffect('i',212))
-    if(a.gte(100000)) a=a.div(100000).pow(0.5).times(100000)
+    if(a.gte(100000)&&gba('i',11).gte(1)) a=a.div(100000).pow(0.5).times(100000)
      return a
     },//计算维度的其他倍率
     buyBoost() {
