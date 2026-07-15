@@ -19,7 +19,7 @@ addLayer("A", {
         return ("成就")
     },
     update(diff) {
-     player.devSpeed=layers.A.devSpeedCal().min(1e12)
+     player.devSpeed=layers.A.devSpeedCal().min(1e24)
      if(player.devSpeed.neq(0)) {
      if(player.r.rot.lt(0)) {
       confirm("你触发了一个bug！Rot点数现在是负数了！这大概是因为你点升级树点得太快了！将强制重置Rot升级树")
@@ -45,7 +45,7 @@ QqQ="QqQe308";banana="3.8642180e38642180";Liu="6.666666666666666666666666e308";f
 	    if(hasUpgrade('sp',47)) dev=dev.mul(upgradeEffect('sp',47))
 	    if(gcs("r",112)==1) dev = dev.mul(clickableEffect("r", 112))
 	    if(hasUpgrade('r',37)) dev=dev.mul(3)
-      if(dev.gte(1e12)) dev = n(1e12)
+      if(dev.gte(1e24)) dev = n(1e24)
       if(!player.points.lt('1e5e8')) dev=n(0)
 	    if(isEndgame()) dev=n(0)
 	    
