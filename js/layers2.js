@@ -2461,10 +2461,10 @@ doReset(resettingLayer) {
     done() { return player.j.pdqja.lte(200)},
    },
    11: {
-    requirementDescription: "通过150ms判定区间挑战",
+    requirementDescription: "通过175ms判定区间挑战",
     effectDescription: "移除经验与Dot硬上限",
-    unlocked() {return hasMilestone('j',10)},
-    done() { return player.j.pdqja.lte(150)},
+    unlocked() {return hasMilestone('j',10)&&hasMilestone('e',13)},
+    done() { return player.j.pdqja.lte(175)},
    },
    12: {
     requirementDescription: "通过100ms判定区间挑战",
@@ -2473,10 +2473,10 @@ doReset(resettingLayer) {
     done() { return player.j.pdqja.lte(100)},
    },
    13: {
-    requirementDescription: "在0ms判定区间挑战中达到e6666686 Notes",
+    requirementDescription: "在0ms判定区间挑战中达到e666686 Notes",
     effectDescription: "解锁最后一个层级",
     unlocked() {return hasMilestone('j',12)},
-    done() { return player.j.pdqj00.lte(0)&&player.points.gte('1e6666686')},
+    done() { return player.j.pdqj00.lte(0)&&player.points.gte('1e666686')},
    },
    },
    clickables:{    
@@ -3867,7 +3867,7 @@ doReset(resettingLayer){if (resettingLayer == 'i') layerDataReset(this.layer,[])
     },
     13: {
      requirementDescription: "一次重置获得超过17经验 并且 通过200ms判定区间挑战",
-     effectDescription() {return "恭喜通关……？"},
+     effectDescription() {return "恭喜通关……？（去判定层级看一下，有惊喜）"},
      unlocked() {return hasMilestone('e',12)},
      done() { return player.e.bestOnce.gte(17)&&player.j.pdqja.lte(200)}
     },

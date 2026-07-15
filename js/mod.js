@@ -11,7 +11,7 @@ let modInfo = {
 }
 // Set your version in num and name
 let VERSION = {
-	num: "0.62",
+	num: "0.63",
 	name: "Final Update",
 }
 
@@ -43,6 +43,8 @@ var displayThings = [
 ]
 
 let changelog = `<h1>更新日志</h1><br>
+<h2>v0.63 Balance III 2026/07/15<br>
+<h3>- 平衡性调整<br><br>
 <h2>v0.62 Fix bug 2026/07/14<br>
 <h3>- 又修复了一个会导致IOS审核外一些加成被削弱的bug<br><br>
 <h2>v0.61 Fix bug 2026/07/11<br>
